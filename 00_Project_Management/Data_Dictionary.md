@@ -71,3 +71,5 @@ Approximately 1 out of every 10 leads captured by marketing turns into an actual
 
 --BURAYA KADARKİ KISIM TABLOLARIN YÜZEYSEL İNCELENMESİ--
 
+BURADAN SONRA TEMİZLEME KISMI
+Products priced under $1 (3 rows) were investigated and appear to be legitimate low-cost items, not data errors. Kept as-is.
