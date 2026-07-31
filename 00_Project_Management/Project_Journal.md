@@ -102,6 +102,72 @@ order_reviews_clean[...] → bu True/False maskesini kullanarak, sadece duplicat
 .sort_values(['order_id', 'review_creation_date']) → sonucu önce order_id'ye göre, sonra (aynı order_id içinde) review_creation_date'e göre sıralar — bu, aynı siparişin review'larının yan yana ve tarih sırasına göre görünmesini sağlar, karşılaştırma yapman kolaylaşır
 .head(20) → ilk 20 satırı göster (hepsini değil, göz atmak için yeterli bir örnek)
 
+| işareti OR VEYA, &  işareti VE AND, ~ DEĞİL NOT anlamına geliyor.
+
+Hayır. "Herhangi biri aynıysa" demiyor.
+Aslında şunu diyor: "Bu sütunların HEPSİ birlikte aynıysa duplicate kabul et."
+Bu kod:
+products.duplicated(
+    subset=[
+        "product_category_name",
+        "product_name_lenght",
+        "product_description_lenght",
+        "product_photos_qty",
+        "product_weight_g",
+        "product_length_cm",
+        "product_height_cm",
+        "product_width_cm"
+    ]
+)
+
+Understanding kısmındaki tekrar eden ürünler, keep'li kod için: 
+keep=False
+Normalde duplicated() sadece ikinci, üçüncü... tekrarları True yapar.
+keep=False dediğimizde ise duplicate grubundaki tüm satırları gösterir.
+keep aslında ne yapıyor?
+product
+A
+A
+A
+B
+C
+C
+Normal hali duplicated():
+product	duplicate
+A	False
+A	True
+A	True
+B	False
+C	False
+C	True
+İlkini bırakıyor.
+
+Çünkü default: keep="first"
+Eğer keep=False:
+product	duplicate
+A	True
+A	True
+A	True
+B	False
+C	True
+C	True
+Artık duplicate grubunun tamamını işaretliyor.
+
+products_clean.loc[
+    products_clean["product_weight_g"] == 0,
+    "product_weight_g"
+] = pd.NA
+
+loc'un mantığı: [satırlar, sütunlar]
+Yani bu kodda satırlarda ağırlığı 0 olanlar olacak, sütunlarda ise yalnızca ağırlık sütunu gösterilecek
+pd.NA kısmı ise seçtiğin bu "hücreleri" NaN yap anlamında
+SQL'de UPDATE products SET product_weight_g = NULL WHERE product_weight_g = 0; karşılığı.
+
+order_payments_clean["payment_installments"].eq(0).sum() anlamı taksit sayısı 0 olan kayıtların toplamı. ==0 ın fonksiyon halidir.
+
+Birden fazla dataframe üzerinde aynı işlemi uygulamak gerektiğinde, her dataframe için ayrı kod yazmak yerine for döngüsü ve dictionary kullanılarak işlem otomatikleştirilebilir.
+
+.value_counts(dropna=False) kodunda dropna=False, "NaN ları da say ihmal etme" anlamına gelir
 
 
 
