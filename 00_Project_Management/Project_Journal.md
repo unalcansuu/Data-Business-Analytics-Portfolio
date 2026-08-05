@@ -169,6 +169,10 @@ Birden fazla dataframe üzerinde aynı işlemi uygulamak gerektiğinde, her data
 
 .value_counts(dropna=False) kodunda dropna=False, "NaN ları da say ihmal etme" anlamına gelir
 
+assign(), birden fazla sütunu tek seferde oluşturur. Tek tek yapmak yerine bu metot, kodu daha okunabilir hale getirir.
+
+value_counts içinde kullanılan "normalize=True" fonksiyonu, oran verir.
+
 
 
 ### Problems
