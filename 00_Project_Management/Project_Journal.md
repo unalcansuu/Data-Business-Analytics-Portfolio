@@ -19,6 +19,10 @@ En değerli müşteri segmentleri hangi özelliklere sahip (RFM tarzı bir segme
 En son bir "hikaye anlatan" özet doküman:
 Notebook'lar senin çalışma alanın; ama bir işe alım uzmanı bunların hepsini okumayacak. README.md'de (veya 05_final_summary.ipynb'de) 5-6 paragraflık, teknik detaya boğulmadan "problem neydi, ne yaptım, ne buldum, ne önerdim" akışında bir özet olmalı, dashboard ekran görüntüleriyle desteklenmiş.
 
+Notebook okunabilirliğini artırmak
+
+
+
 
 ### Decisions
 
@@ -173,7 +177,34 @@ assign(), birden fazla sütunu tek seferde oluşturur. Tek tek yapmak yerine bu 
 
 value_counts içinde kullanılan "normalize=True" fonksiyonu, oran verir.
 
+.all(axis=1) her satır için "Hepsi True mu?" diye soruyor. Her biri True olursa o zaman True değeri dönüyor.
+all(axis=1) → Hepsi doğru mu?
+any(axis=1) → En az biri doğru mu?
+sum(axis=1) → Kaç tanesi doğru?
 
+nlargest(n, column): "Belirttiğim sütuna göre en büyük n satırı getir."
+Alternatif olarak: .sort_values(..., ascending=False).head(10)
+Ama nlargest() hem daha okunaklı hem de büyük veri setlerinde genellikle daha performanslıdır.
+
+
+order_items["items_in_order"] = (
+    order_items
+    .groupby("order_id")["order_item_id"]
+    .transform("count")
+)
+order_id'ye göre satırları gruplandırdım.
+order_item_id ile, bu sütun üzerinde işlem yapacağımı söyledim.
+transform kısmı ise;
+Örneğin groupby().count() yapsaydık A-3, B-1, C-2 gibi olurdu. A order_id'sinden 3 order_item_id var diye tek satırda yazılırdı, satır sayısı azalmış olurdu
+transform kullanımında ise satır sayısı azalmıyor;  A A A satırlarının hepsine 3 3 3 yazıyor.
+.transform("sum") → Sipariş toplam tutarı
+.transform("mean") → Müşterinin ortalama harcaması
+.transform("max") → En pahalı ürün
+.transform("nunique") → Benzersiz değer sayısı, "kaç farklı?"
+.transform("count") → Grup büyüklüğü
+Yani aslında transform() bir fonksiyon değil, bir yöntem ailesi gibi düşünebilirsin. İçine hangi işlemi verirsen, onu grup bazında hesaplayıp tekrar satırlara dağıtır.
+
+.map() fonksiyonu bir sütundaki değerleri başka değerlere dönüştürür.
 
 ### Problems
 
