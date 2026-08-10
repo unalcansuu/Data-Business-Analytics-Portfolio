@@ -206,6 +206,47 @@ Yani aslında transform() bir fonksiyon değil, bir yöntem ailesi gibi düşün
 
 .map() fonksiyonu bir sütundaki değerleri başka değerlere dönüştürür.
 
+region_map'i tekrar kullandık; customers ve sellers için ayrı ayrı oluşturup tutmadık çünkü aynı bilgi iki yerde tutulursa ileride birini değiştirip diğerini unutabiliriz. Bu durum Python'da DRY - Don't Repeat Yourself durumunun bir örneği.
+
+.agg() bize aynı groupby üzerinde birden fazla aggregation yapma imkanı veriyor. Gruplar halinde özet istatistikler verir.
+
+Grain = bir tablodaki 1 satırın neyi temsil ettiği.
+customers → 1 satır = 1 müşteri
+orders → 1 satır = 1 sipariş
+order_items → 1 satır = 1 sipariş içindeki 1 ürün
+order_payments → 1 satır = 1 ödeme kaydı
+order_reviews → 1 satır = 1 review kaydı
+sellers → 1 satır = 1 seller
+products → 1 satır = 1 ürün
+Bunu bilmek merge sırasında hangi tablonun satırları çoğaltabileceğini anlamamızı sağlıyor.
+
+merge() işlemi, yeni bir df döndürür. eğer direkt orders.merge(customers, ...) yaparsam merge edilmiş tablo oluşur ama orders değişkeninin kendisi otomatik olarak değişmez. Ancak orders = orders.merge() yaptığımızda:
+eski orders
+     +
+customers
+     ↓
+merge sonucu
+     ↓
+orders değişkenine tekrar kaydet
+
+Kod Açıklaması:
+order_item_summary = (
+    order_items.groupby("order_id")
+    .agg(
+        item_count=("order_item_id", "count"),
+        unique_product_count=("product_id", "nunique"),
+        unique_seller_count=("seller_id", "nunique"),
+        total_item_price=("price", "sum"),
+        total_freight_value=("freight_value", "sum"),
+        total_item_cost=("item_total_cost", "sum"),
+        free_shipping_item_count=("is_free_shipping", "sum")
+    )
+    .reset_index()
+)
+groupby("order_id" ) ile aynı siparişe ait item'lar bir araya getirildi. .agg() ile her order_id grubu için hangi hesabın yapılacağı söylendi. Mesela:
+item_count=("order_item_id", "count")
+:Her order'ın order_item_id değerlerini say ve sonucu item_count adıyla kaydet.
+
 ### Problems
 
 Claude "xtamam anladım kodu süpersin." kısmında kaldı data cleaning.
