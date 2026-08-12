@@ -247,6 +247,18 @@ groupby("order_id" ) ile aynı siparişe ait item'lar bir araya getirildi. .agg(
 item_count=("order_item_id", "count")
 :Her order'ın order_item_id değerlerini say ve sonucu item_count adıyla kaydet.
 
+groupby() yaptığında order_id geçici olarak index haline geliyor.
+              total_payment_value
+order_id
+A                         100
+B                         250
+reset_index() bunu tekrar normal sütun haline getiriyor:
+order_id    total_payment_value
+A           100
+B           250
+
+reset_index() index'i tekrar normal bir DataFrame sütununa çeviriyor. Bizim merge edeceğimiz anahtar order_id olduğu için burada bunu yapmamız gerekiyor.
+
 ### Problems
 
 Claude "xtamam anladım kodu süpersin." kısmında kaldı data cleaning.
