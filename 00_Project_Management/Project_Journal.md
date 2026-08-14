@@ -259,6 +259,24 @@ B           250
 
 reset_index() index'i tekrar normal bir DataFrame sütununa çeviriyor. Bizim merge edeceğimiz anahtar order_id olduğu için burada bunu yapmamız gerekiyor.
 
+#`lambda` 
+customer_total_spend=(
+    "order_total_price",
+    lambda x: x.sum(min_count=1)
+)
+Sorun şu: `"sum"` diye yazarsan, pandas'a sadece "toplama işlemi yap" demiş olursun — ama `sum()` fonksiyonunun varsayılan ayarlarıyla çalışır, ona ekstra bir parametre (`min_count=1` gibi) veremezsin, çünkü sadece bir string yazıyorsun, fonksiyonu çağırmıyorsun.
+**Lambda, tam olarak burada devreye giriyor** — sana "özel, parametre verebildiğin, kendi tanımladığın küçük bir fonksiyon" yazma imkanı sağlıyor:
+Bunu şöyle oku: "Bana `x` diye bir grup (bir müşterinin tüm `order_total_price` değerleri) ver, ben bu gruba `.sum(min_count=1)` uygulayıp sonucu döndüreyim."
+`x`, burada groupby'ın her bir grubunu (yani her bir `customer_unique_id`'ye ait tüm siparişlerin `order_total_price` değerlerini bir seri olarak) temsil ediyor. Lambda, bu grubu alıp üzerinde istediğin **herhangi bir** işlemi yapmana izin veriyor — `"sum"` gibi hazır bir isimle sınırlı kalmadan.
+
+Diyelim bir müşterinin 3 siparişi var, `order_total_price` değerleri: `[100, NaN, 50]`.
+- `"sum"` (hazır isim) kullanırsan: pandas otomatik NaN'ı atlar, `150` döner — ama eğer **tüm** değerler NaN olsaydı (`[NaN, NaN, NaN]`), yine de `0` dönerdi, bu bizim istemediğimiz yanıltıcı davranış.
+- `lambda x: x.sum(min_count=1)` kullanırsan: `[100, NaN, 50]` için yine `150` döner (aynı, sorun yok) — ama `[NaN, NaN, NaN]` durumunda, "en az 1 geçerli değer olmalı" şartı sağlanmadığı için sonuç `NaN` kalır, yanlışlıkla `0` üretilmez.
+
+**Özetle:** Lambda, `.agg()` içinde hazır isimlerle yapamayacağın **özel/parametre gerektiren** işlemleri tanımlamanı sağlayan bir araç — "bu grup için tam olarak şunu yap" demenin yolu.
+
+.T = transpose, yani tabloyu yatay/dikey olarak çevirir.
+
 ### Problems
 
 Claude "xtamam anladım kodu süpersin." kısmında kaldı data cleaning.
