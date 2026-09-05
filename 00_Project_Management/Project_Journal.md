@@ -49,6 +49,15 @@ PowerBI'da dashboard'lar.
         ↓
 9. GitHub & Documentation
 
+raw_data
+= kaynak veri
+processed
+= temizlenmiş veri
+feature_engineered
+= tablo bazında zenginleştirilmiş veri
+final
+= analize hazır birleşik veri ürünleri
+
 ### What I Learned
 
 Customers veritabanında customer_id ve customer_unique_id olmasının sebebi örneğin ben bir e-ticaret sitesiyim. Sen benden bugün alışveriş yaptın. Sana bir customer_id verdim. Sonra hesabını sildin. 3 ay sonra tekrar üye oldun. Sence ben sana aynı customer_id'yi mi veririm? Muhtemelen hayır. Ama gerçekte aynı kişi sensin. İşte burada ikinci bir kimlik gerekebilir.
