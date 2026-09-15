@@ -21,6 +21,7 @@ Notebook'lar senin çalışma alanın; ama bir işe alım uzmanı bunların heps
 
 Notebook okunabilirliğini artırmak
 
+total order price yaptık eda kısmında ama freight i de dahil ederek lojistik ile ilgili analiz yapmayı unutma
 
 
 
@@ -285,6 +286,18 @@ Diyelim bir müşterinin 3 siparişi var, `order_total_price` değerleri: `[100,
 **Özetle:** Lambda, `.agg()` içinde hazır isimlerle yapamayacağın **özel/parametre gerektiren** işlemleri tanımlamanı sağlayan bir araç — "bu grup için tam olarak şunu yap" demenin yolu.
 
 .T = transpose, yani tabloyu yatay/dikey olarak çevirir.
+
+.set_index("order_purchase_timestamp") --> index geçici olarak yani o kod için sipariş tarihine çevirilir.
+.resample("MS") --> datetime verisini belirli zaman aralıklarına gruplar. Month Start yani böylece her takvim ayını ayrı bir grup yapar. Böylece Ocak grubunun etiketi 2017-01-01 olur, bu Ocak ayının tamamını temsil eder. resample boş ayları da oluşturabilir, gerekirse 0 diye gösterir.
+Daha sonrasında kullanılan .agg(...) --> "Her ay için hangi özet metrikleri hesaplamak istiyorum?"
+.reset_index() --> order_purchase_timestamp kolonu geçici index yapılmıştı, aggregation bittikten sonra bunu tekrar normal kolona çevirdik.
+
+plt.figure(figsize=(12, 5)) --> Yeni bir grafik alanı oluşturduk; genişlik 12 inch, yükseklik 5 inch oldu.
+sns.lineplot() --> Seaborn ile line chart çizildi. data= ile kullanılacak df belirtildi. marker="o" ile her aya küçük bir nokta kondu, böylece sadece çizgi değil gerçek aylık gözlem noktaları da görünebilir.
+plt.xticks(rotation=45) --> Tarih etiketini 45 derece döndürerek eğik yazdı, yoksa birbirlerinin üstüne binebilirlerdi.
+plt.tight_layout() --> Başlık, x etiketi, tick vs. kesilmesini önlemek için yerleşimi otomatik olarak toparladı.
+
+
 
 ### Problems
 
