@@ -297,6 +297,24 @@ sns.lineplot() --> Seaborn ile line chart çizildi. data= ile kullanılacak df b
 plt.xticks(rotation=45) --> Tarih etiketini 45 derece döndürerek eğik yazdı, yoksa birbirlerinin üstüne binebilirlerdi.
 plt.tight_layout() --> Başlık, x etiketi, tick vs. kesilmesini önlemek için yerleşimi otomatik olarak toparladı.
 
+Sipariş sayısı ve toplam satış tutarı artsa da AOV değeri daha yatay kalmış, kimi zaman düşmüş. Bunun nedeni müşterilerin sipariş başına daha fazla tutarda alışveriş yapması değil de sipariş sayısının artması ancak belki de ortalama sipariş tutarının düşmesidir. Örneğin:
+Eylül 2017
+Order count: 4,285
+Total sales: 624,402
+AOV: 147.16
+
+Kasım 2017
+Order count: 7,544
+Total sales: 1,010,271
+AOV: 135.59
+
+weekday_orders["purchase_weekday"] = pd.Categorical(
+    weekday_orders["purchase_weekday"],
+    categories=weekday_order,
+    ordered=True
+)
+Bu kod ile "purchase_weekday" kolonuna bunların sıradan metin değil de sıralı kategoriler olduğunu söylüyoruz. ordered=True ile kategori sırasının "Monday<Tuesday<..." şeklinde olduğunu belirtiyoruz.
+
 
 
 ### Problems
