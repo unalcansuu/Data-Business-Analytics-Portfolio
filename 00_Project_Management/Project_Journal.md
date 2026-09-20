@@ -315,6 +315,19 @@ weekday_orders["purchase_weekday"] = pd.Categorical(
 )
 Bu kod ile "purchase_weekday" kolonuna bunların sıradan metin değil de sıralı kategoriler olduğunu söylüyoruz. ordered=True ile kategori sırasının "Monday<Tuesday<..." şeklinde olduğunu belirtiyoruz.
 
+customer_view["order_frequency_group"] = pd.cut(
+    customer_view["customer_order_count"],
+    bins=[0, 1, 2, 3, 4, np.inf],
+    labels=["1", "2", "3", "4", "5+"]
+)
+Bu kod için
+pd.cut, sayısal bir kolonu aralıklara bölüp kategorilere çevirir. Burada customer_order_count değerlerini 1, 2, 3, 4 ve 5+ gruplarına ayırıyoruz.
+np.inf ise sonsuz demek. Burada “4'ten büyük olan her şey” için üst sınır olarak kullanıyoruz.
+
+repeat_customers = customer_view.query(
+    "customer_order_count > 1"
+).copy()
+Bu kodda query, aslında "customer_view[customer_view["customer_order_count"] > 1" kod parçasının daha okunabilir hali denilebilir. Yani "Bana order count'u 1'den büyük müşterileri getir." demiş olduk ve .copy() ile bağımsız bir df oluşturdum.
 
 
 ### Problems
