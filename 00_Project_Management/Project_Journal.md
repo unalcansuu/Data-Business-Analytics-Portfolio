@@ -59,6 +59,13 @@ feature_engineered
 final
 = analize hazır birleşik veri ürünleri
 
+İşletme açısından bakıldığında, sonuçlar farklı stratejik fırsatlar sunmaktadır:
+- `Potansiyel Sadık Müşteriler` için elde tutma ve ikinci satın alma stratejilerine öncelik verirdim.
+- Nispeten yüksek yakınlıklarına rağmen önemli değer kattıkları için `Büyük Harcama Yapan Müşterileri` yeniden etkinleştirme kampanyalarıyla hedeflerdim.
+- Müşteri başına en yüksek ortalama değeri ürettikleri için `Şampiyonları` elde tutmaya odaklanırdım.
+- Ek davranışsal sinyaller daha fazla yatırımı haklı çıkarmadığı sürece `Uyku Halindeki` müşterileri daha düşük değerli bir yeniden etkinleştirme segmenti olarak ele alırdım.
+`Yetersiz Veri` segmentindeki müşteriler, parasal bilgilerinin sıfır olduğu doğrulanmadığı için sıfır değerli müşteriler olarak yorumlanmaz.
+
 ### What I Learned
 
 Customers veritabanında customer_id ve customer_unique_id olmasının sebebi örneğin ben bir e-ticaret sitesiyim. Sen benden bugün alışveriş yaptın. Sana bir customer_id verdim. Sonra hesabını sildin. 3 ay sonra tekrar üye oldun. Sence ben sana aynı customer_id'yi mi veririm? Muhtemelen hayır. Ama gerçekte aynı kişi sensin. İşte burada ikinci bir kimlik gerekebilir.
@@ -328,6 +335,18 @@ repeat_customers = customer_view.query(
     "customer_order_count > 1"
 ).copy()
 Bu kodda query, aslında "customer_view[customer_view["customer_order_count"] > 1" kod parçasının daha okunabilir hali denilebilir. Yani "Bana order count'u 1'den büyük müşterileri getir." demiş olduk ve .copy() ile bağımsız bir df oluşturdum.
+
+ecdfplot(), ECDF, “X gün veya daha az recency’ye sahip müşterilerin oranı nedir?” sorusunu cevaplar. Mesela x = 100 noktasında y değeri 0.20 ise, müşterilerin %20’sinin son alışverişi 100 gün veya daha yakın zamanda olmuş demektir.
+
+for container in ax.containers:
+    ax.bar_label(container, fmt="%d")
+Bu kodda ax, oluşturulan matplotlib ekseni, ax.containers ise grafikteki bar grupları. "for container in ax.containers" ile grafikteki bar koleksiyonlarının üzerinden geçiliyor.
+"ax.bar_label(container, fmt="%d")" ise her barın üstüne/yanına gerçek sayısal değeri yazıyor. "fmt="%d", değeri integer olarak gösteriyor. "fmt="%.1f"" olsaydı float şeklinde görünürdü.
+
+EDA içindeki monetary_share_pct → segmentin toplam customer spend içindeki yüzdesi
+
+Burada plt.ylim(0, 5) kullanmamızın nedeni review score ölçeğinin zaten 1–5 olması. Böylece grafik farkı yapay biçimde abartmaz.
+
 
 
 ### Problems
