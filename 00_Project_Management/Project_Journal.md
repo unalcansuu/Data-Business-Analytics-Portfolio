@@ -23,7 +23,7 @@ Notebook okunabilirliğini artırmak
 
 total order price yaptık eda kısmında ama freight i de dahil ederek lojistik ile ilgili analiz yapmayı unutma
 
-
+Belki NLP eklenebilir
 
 ### Decisions
 
@@ -346,6 +346,8 @@ Bu kodda ax, oluşturulan matplotlib ekseni, ax.containers ise grafikteki bar gr
 EDA içindeki monetary_share_pct → segmentin toplam customer spend içindeki yüzdesi
 
 Burada plt.ylim(0, 5) kullanmamızın nedeni review score ölçeğinin zaten 1–5 olması. Böylece grafik farkı yapay biçimde abartmaz.
+
+.mul(100), normalize=True yaptığımızda gelen oransal değerleri 100 ile çarpar
 
 
 
