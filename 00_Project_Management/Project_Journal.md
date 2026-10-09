@@ -374,6 +374,7 @@ ax.annotate() ise grafiğin belirli bir noktasına yazı/açıklama ekler.
 xytext=(7,5) yazıyı noktanın tam üzerine bindirmemek için 7 br sağa 5 br yukarı kaydırıyor. textcoords="offset points" de bu (7,5) değerlerinin grafik verisi değil, görsel offset olduğunu söylüyor.
 Başlık yazma kısmında ise bu kez plt.title() yerine ax.set_title() kullanımı var çünkü object-oriented Matplotlib yaklaşımındayız; yani ax nesnesini doğrudan yürütüyoruz. Karmaşık grafiklerde bu daha kontrollü olur.
 
+cumcount() fonksiyonu, her grubun içindeki satırları sıfırdan başlayarak numaralandırır. Örneğin A,B,C şeklinde farklı müşterilerin ve siparişlerinin bulunduğu bir veri seti varsa cumcount, A'ları kendi içinde B'leri kendi içinde gibi 0'dan başlayarak numaralandırır. Eğer bu sıralamanın 0'dan değil de 1'den başlayarak yapılmasını istersek koda +1 ekleyebiliriz
 
 
 
