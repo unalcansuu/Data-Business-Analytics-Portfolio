@@ -349,6 +349,32 @@ Burada plt.ylim(0, 5) kullanmamızın nedeni review score ölçeğinin zaten 1�
 
 .mul(100), normalize=True yaptığımızda gelen oransal değerleri 100 ile çarpar
 
+ax.scatter(
+origin_performance["median_days_to_close"],
+...
+s=origin_performance["won_leads"] * 3,
+alpha=0.7)
+dediğimizde parantez içerisinde ilk verilen değer x koordinatı
+daha sonra y koordinatı
+3.satır Size anlamına gelip balonların/noktaların büyüklüğü, *3 farkların görünür olması için görsel ölçekleme
+alpha noktaların saydamlığı
+for _, row in origin_performance.iterrows():
+    ax.annotate(
+        row["origin"],
+        (
+            row["median_days_to_close"],
+            row["conversion_rate_pct"]
+        ),
+        xytext=(7, 5),
+        textcoords="offset points"
+    )
+kısmında for dongüsü ile kanal isimleri yazılarını oluşturuyoruz. Normalde scatter plot sadece balonları çizer ve hangi kanal olduğunu kendiliğinden yazmaz ancak iterrows(), dataframe'i satır satır dolaşıyor.
+iterrows() aslında 'index, row' şeklinde 2 şey döndürür ancak index'e ihtiyacımız yok. Bu yüzden 'for_' sayesinde index'i değil sadece satırı almış olduk.
+ax.annotate() ise grafiğin belirli bir noktasına yazı/açıklama ekler.
+xytext=(7,5) yazıyı noktanın tam üzerine bindirmemek için 7 br sağa 5 br yukarı kaydırıyor. textcoords="offset points" de bu (7,5) değerlerinin grafik verisi değil, görsel offset olduğunu söylüyor.
+Başlık yazma kısmında ise bu kez plt.title() yerine ax.set_title() kullanımı var çünkü object-oriented Matplotlib yaklaşımındayız; yani ax nesnesini doğrudan yürütüyoruz. Karmaşık grafiklerde bu daha kontrollü olur.
+
+
 
 
 ### Problems
