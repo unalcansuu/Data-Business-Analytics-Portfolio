@@ -376,6 +376,14 @@ Başlık yazma kısmında ise bu kez plt.title() yerine ax.set_title() kullanım
 
 cumcount() fonksiyonu, her grubun içindeki satırları sıfırdan başlayarak numaralandırır. Örneğin A,B,C şeklinde farklı müşterilerin ve siparişlerinin bulunduğu bir veri seti varsa cumcount, A'ları kendi içinde B'leri kendi içinde gibi 0'dan başlayarak numaralandırır. Eğer bu sıralamanın 0'dan değil de 1'den başlayarak yapılmasını istersek koda +1 ekleyebiliriz
 
+SQL'de BEGIN (veya BEGIN TRANSACTION / START TRANSACTION) ve COMMIT komutları, veritabanı işlemlerini (transaction) güvenli bir şekilde yönetmek için kullanılır.
+BEGIN, bir veritabanı işleminin başlangıç noktasını işaretler ancak burada yapılan işlemler henüz kalıcı değildir. Böylece bir sorun olursa ROLLBACK ile işlem geri alınabilir. BEGIN ile başlayan bir blok sonrasındaki tüm SQL komutları (INSERT, UPDATE, DELETE vb.) tek bir mantıksal işlem birimi olarak değerlendirilir.
+COMMIT ise yapılan veritabanı işlemlerini kalıcı hale getirir. COMMIT komutu çalıştırıldıktan sonra yapılan değişiklikler geri alınamaz.
+
+SQL'de
+WITH .... AS ifadesi, CTE oluşturup sorguyu mantıksal adımlara ayırır. CTE (Common Table Expression) yani Ortak Tablo İfadesi anlamına gelir. Bir SQL sorgusunun içinde, başka bir sorgunun kullanabileceği geçici, isimlendirilmiş bir sonuç kümesi oluşturmayı sağlar. Yani CTE kalıcı bir tablo oluşturmaz, yalnızca o SQL komutu boyunca kullanılabilir.
+
+DATE_TRUNC() ifadesinin içerisinde year, month, day, quarter, hour, week gibi seçenekler kullanabiliriz ve böylece tarih/saat bilgisi istenilen zaman düzeyine indirgenir
 
 
 ### Problems
