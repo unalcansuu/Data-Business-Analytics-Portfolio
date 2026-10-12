@@ -39,25 +39,6 @@ WHERE o.order_status = 'delivered'
 GROUP BY 1
 ORDER BY 1;
 
--- Diagnose missing monetary values in order items
-
-SELECT
-    COUNT(*) AS total_rows,
-
-    COUNT(price) AS non_null_price_rows,
-
-    COUNT(*) FILTER (WHERE price IS NULL)
-        AS null_price_rows,
-
-    COUNT(freight_value) AS non_null_freight_rows,
-
-    MIN(price) AS min_price,
-
-    MAX(price) AS max_price,
-
-    SUM(price) AS total_product_value
-
-FROM order_items_fe;
 
 -- ============================================================
 -- 2. YEAR-OVER-YEAR SALES GROWTH (JANUARY - AUGUST)

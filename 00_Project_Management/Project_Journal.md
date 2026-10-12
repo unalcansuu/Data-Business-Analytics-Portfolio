@@ -385,6 +385,35 @@ WITH .... AS ifadesi, CTE oluşturup sorguyu mantıksal adımlara ayırır. CTE 
 
 DATE_TRUNC() ifadesinin içerisinde year, month, day, quarter, hour, week gibi seçenekler kullanabiliriz ve böylece tarih/saat bilgisi istenilen zaman düzeyine indirgenir
 
+OVER() İFADESİ VE WINDOW FUNCTION
+SUM(total_sales) OVER ()
+Normalde SUM() fonksiyonunu GROUP BY ile birlikte kullandığında satırları gruplandırarak bir sonuç üretirsin.
+Ama OVER () eklediğinde window function (pencere fonksiyonu) kullanmış olursun. Diyelim üç kategorimiz var:
+Kategori	Satış
+A	500
+B	300
+C	200
+Normal bir toplam sorgusu:
+SELECT SUM(total_sales)
+FROM category_sales;
+Tek sonuç üretir: 1000.
+Ama pencere fonksiyonu:
+SELECT
+    category,
+    total_sales,
+    SUM(total_sales) OVER () AS overall_sales
+FROM category_sales;
+şöyle bir sonuç üretir:
+Kategori	Satış	Genel toplam
+A	500	1.000
+B	300	1.000
+C	200	1.000
+Fark: OVER () her kategoriyi ayrı satırda tutarken genel toplamı da her satırın yanında gösterir. Buradaki OVER () boş olduğu için bütün kategorileri kapsıyor. Ayrıca yüzde hesabı LIMIT 10 uygulanmadan önce yapılıyor. Dolayısıyla payları yalnızca ilk 10 kategoriye göre değil, kategori bilgisi bulunan bütün teslim edilmiş ürün satışlarına göre hesaplıyoruz.
+
+WITH, SQL'de bir CTE (Common Table Expression) tanımlar. CTE, ana sorgunun kullanılabileceği isimlendirilmiş bir ara sonuç gibidir. Örneğin önce her kategorinin satışını hesapladım, daha sonra bu hesaplanmış sonuç üzerinden başka işlemler yapacağım, yüzdelerini bulacağım vb. WITH sayesinde ilk hesabı ayrı bir mantıksal bölüm olarak yazabiliriz.
+WITH category_sales AS (...)
+WITH ile bir CTE tanımlamaya başlıyoruz. category_sales bu CTE'nin adı. AS ise bu adın hangi sorgu sonucunu temsil ettiğini belirtiyor. Parantez içerisinde CTE'yi oluşturan o SQL sorgusunu yazıyoruz. CTE, veritabanında kalıcı bir tablo oluşturmaz, yalnızca tanımlandığı SQL komutunda kullanılabilir. Basit sorgularda gereksizdir.
+GROUP BY, satırları gruplar halinde özetler. Window Function ise satırları koruyarak, onların üzerinde sıralama, karşılaştırma veya toplama gibi hesaplamalar yapar.
 
 ### Problems
 
