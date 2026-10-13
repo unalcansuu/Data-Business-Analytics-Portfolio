@@ -66,6 +66,17 @@ final
 - Ek davranışsal sinyaller daha fazla yatırımı haklı çıkarmadığı sürece `Uyku Halindeki` müşterileri daha düşük değerli bir yeniden etkinleştirme segmenti olarak ele alırdım.
 `Yetersiz Veri` segmentindeki müşteriler, parasal bilgilerinin sıfır olduğu doğrulanmadığı için sıfır değerli müşteriler olarak yorumlanmaz.
 
+In the January–August 2017–2018 comparison, categories with higher baseline sales demonstrated substantial absolute growth. Beauty & Health and Watches generated particularly large sales increases, while some smaller categories achieved higher percentage growth.
+Burada bir metodoloji notu da tutacağız: 7.717,34 eşiği, 2017 kategori satışlarının medyanına dayanan bir analiz tercihidir. Düşük hacimli kategorileri değersiz kabul etmiyoruz, sadece farklı büyüklükteki kategorileri daha dikkatli karşılaştırıyoruz.
+
+## SQL Analysis Findings
+
+- Sales growth (Jan-Aug 2017 vs 2018): Delivered-order product sales increased by 141.13%, while order volume increased by 139.94% and AOV by only 0.49%. Growth was primarily volume-driven.
+- Category concentration: The top 10 categories accounted for 62.43% of classified delivered-order product sales; the top three accounted for 25.89%.
+- Growth-rate interpretation: Categories with very small 2017 sales baselines produced exceptionally high YoY growth percentages. Percentage growth must be evaluated alongside absolute sales growth and baseline sales.
+- Baseline distribution: Across 71 categories with delivered sales in Jan-Aug 2017, median category sales were 7,717.34, P25 was 1,413.79, and P75 was 48,885.23.
+- Methodology: Product sales exclude freight and use delivered orders. Category analyses exclude missing category names; verify missing-category coverage before final reporting.
+
 ### What I Learned
 
 Customers veritabanında customer_id ve customer_unique_id olmasının sebebi örneğin ben bir e-ticaret sitesiyim. Sen benden bugün alışveriş yaptın. Sana bir customer_id verdim. Sonra hesabını sildin. 3 ay sonra tekrar üye oldun. Sence ben sana aynı customer_id'yi mi veririm? Muhtemelen hayır. Ama gerçekte aynı kişi sensin. İşte burada ikinci bir kimlik gerekebilir.
@@ -414,6 +425,26 @@ WITH, SQL'de bir CTE (Common Table Expression) tanımlar. CTE, ana sorgunun kull
 WITH category_sales AS (...)
 WITH ile bir CTE tanımlamaya başlıyoruz. category_sales bu CTE'nin adı. AS ise bu adın hangi sorgu sonucunu temsil ettiğini belirtiyor. Parantez içerisinde CTE'yi oluşturan o SQL sorgusunu yazıyoruz. CTE, veritabanında kalıcı bir tablo oluşturmaz, yalnızca tanımlandığı SQL komutunda kullanılabilir. Basit sorgularda gereksizdir.
 GROUP BY, satırları gruplar halinde özetler. Window Function ise satırları koruyarak, onların üzerinde sıralama, karşılaştırma veya toplama gibi hesaplamalar yapar.
+
+CTE, bazı yönleriyle VIEW'a benzer iş yapar diyebiliriz. Her ikisi de bir sorguya isim verir. Ancak CTE sonraki sorgularda kullanılamaz ve sadece tanımlandığı komutta kullanılabilirken VIEW sonraki sorgularda da kullanılabilir. Yani VIEW veritabanında kalıcı olarak tanımlanır ancak CTE tanımlanmaz. VIEW genelde tekrar kullanılacak sorgular içinken CTE çok aşamalı analizler içindir.
+
+LAG(total_sales) OVER (
+    PARTITION BY category
+    ORDER BY sales_year
+) AS previous_year_sales
+LAG(total_sales), önceki satırın total_sales değerini getirir. PARTITION BY category, her kategori için ayrı bir pencere oluşturur ve böylece bir kategorinin satışları başka bir kategori ile karışmaz.
+Diyelim A ve B kategorilerinin 2017-2018 senelerindeki satışları için bir tablo oluşturuyoruz. LAG, önceki yılın satışlarını gösteren sütunu oluşturur. Ayrıca PARTITION BY olmasaydı kategoriler birbirinden ayrılmazdı. Örneğin B kategorisinin 2017 satırı, sıralamaya bağlı olarak A kategorisinin satışını önceki değer olarak alabilirdi.
+
+ORDER BY sales_growth_pct DESC NULLS LAST
+Bu kodda NULLS LAST ifadesi değeri NULL olanları en sona koyar. Bunu yazmasaydık PostgreSQL'de ORDER BY ... DESC ifadesi NULL değerleri varsayılan olarak başa getirebilirdi.
+
+LAG kullanımında sözdiziminde OVER zorunlu ancak PARTITION BY isteğe bağlıdır. Örneğin:
+LAG(total_sales) OVER (
+    PARTITION BY category
+    ORDER BY sales_year
+) AS previous_year_sales
+LAG, bir önceki satırın satış tutarını getirir. OVER(...), bu işlemin hangi satırlar üzerinde yapılacağını tanımlar. PARTITION BYher kategoriyi ayrı değerlendirir.
+Ayrıca LAG illa ki bir önceki satırı getirmek zorunda değildir. Örneğin LAG(total_sales, 2) gibi bir kullanımda 2 satır geriye gider ve böylece 2 yıl öncesinin verisiyle karşılaştırma yapabiliriz.
 
 ### Problems
 
