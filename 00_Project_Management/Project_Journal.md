@@ -1,14 +1,13 @@
-# Project Journal
+# PROJECT JOURNAL
 
-## Roadmap
+## ROADMAP
 Nova7, Brezilya pazarında faaliyet gösteren, birden fazla satıcıyı bir araya getiren bir e-ticaret pazar yeri (marketplace). Şirket son dönemde pazarlama harcamalarını artırdı ve farklı kanallardan (organik arama, sosyal medya, referans, ücretli reklam vs.) lead topluyor. Ancak yönetim ekibi şu soruyu soruyor: "Pazarlamaya harcadığımız paranın karşılığını alıyor muyuz, ve kazandığımız müşteriler gerçekten değerli mi?"
 
 Sana (veri analisti olarak) şu görev veriliyor: lead'den satışa dönüşüm sürecini analiz et, hangi kanalların gerçekten değerli (tekrar alışveriş yapan, yüksek harcamalı) müşteri getirdiğini bul, ve yönetime "nereye daha çok yatırım yapmalıyız" konusunda veriye dayalı bir öneri sun
 
 Taşıyıcı doğrulaması, az sayıda olağandışı zaman damgası anormalliği (özellikle ~10 günlük ve ~172 günlük negatif gecikmeler) tespit etti. Bu kayıtlar, iş metriklerini etkileyip etkilemediklerini veya izole veri kalitesi sorunlarını temsil edip etmediklerini belirlemek için Keşifsel Veri Analizi aşamasında yeniden incelenecektir.
 
-### Goal
-
+### GOAL
 Hangi pazarlama kanalları (lead kaynakları) en çok gerçek satışa dönüşen müşteriyi getiriyor?
 Dönüşen müşteriler arasında kimler tekrar alışveriş yapıyor, kimler tek seferlik kalıyor — bu ikisi arasındaki fark ne (bölge, harcama tutarı, kategori tercihi vs.)?
 En değerli müşteri segmentleri hangi özelliklere sahip (RFM tarzı bir segmentasyon: Recency-Frequency-Monetary)?
@@ -25,7 +24,7 @@ total order price yaptık eda kısmında ama freight i de dahil ederek lojistik 
 
 Belki NLP eklenebilir
 
-### Decisions
+### DECISIONS
 
 Notebook klasöründe keşif, denemeler, EDA, hipotez testleri.
 Python klasöründe temizlenmiş, tekrar kullanılabilir kodlar.
@@ -69,6 +68,8 @@ final
 In the January–August 2017–2018 comparison, categories with higher baseline sales demonstrated substantial absolute growth. Beauty & Health and Watches generated particularly large sales increases, while some smaller categories achieved higher percentage growth.
 Burada bir metodoloji notu da tutacağız: 7.717,34 eşiği, 2017 kategori satışlarının medyanına dayanan bir analiz tercihidir. Düşük hacimli kategorileri değersiz kabul etmiyoruz, sadece farklı büyüklükteki kategorileri daha dikkatli karşılaştırıyoruz.
 
+Among customers with delivered orders, 97.00% made only one purchase, while 3.00% made multiple purchases. Repeat customers placed an average of 2.11 orders. This indicates limited observed repeat purchasing, although the dataset's observation period must be considered.
+
 ## SQL Analysis Findings
 
 - Sales growth (Jan-Aug 2017 vs 2018): Delivered-order product sales increased by 141.13%, while order volume increased by 139.94% and AOV by only 0.49%. Growth was primarily volume-driven.
@@ -77,8 +78,69 @@ Burada bir metodoloji notu da tutacağız: 7.717,34 eşiği, 2017 kategori satı
 - Baseline distribution: Across 71 categories with delivered sales in Jan-Aug 2017, median category sales were 7,717.34, P25 was 1,413.79, and P75 was 48,885.23.
 - Methodology: Product sales exclude freight and use delivered orders. Category analyses exclude missing category names; verify missing-category coverage before final reporting.
 
-### What I Learned
+### Customer Cohort Retention Analysis
 
+**Business Question:** How does monthly repeat purchasing behavior vary across customer acquisition cohorts?
+
+**Key Findings:**
+- Monthly customer retention was consistently low across the analyzed cohorts.
+- Month-1 retention ranged from **0.18% to 0.72%**, with October 2017 showing the highest observed rate.
+- No clear, sustained improvement in month-1 retention was observed across the cohorts.
+- Month-2 and month-3 retention rates varied, indicating that repeat purchasing does not necessarily occur in consecutive months.
+
+**Business Implications:**
+- The results suggest an opportunity to investigate customer retention and repeat purchasing behavior.
+- Potential areas for further analysis include product purchase frequency, customer satisfaction, and post-purchase engagement.
+
+**Methodology & Limitations:**
+- Cohorts were defined using each customer's first delivered purchase month.
+- Retention represents purchasing activity in specific subsequent calendar months, not cumulative retention.
+- Only cohorts with three complete follow-up calendar months within the selected analysis window were included.
+- The analysis identifies patterns but does not establish the causes of low retention.
+
+06 SQL KISMI
+İlk iş sorumuz
+Platformdaki en yüksek satış hacmine sahip 10 satıcı kim ve toplam ürün satışlarının ne kadarını oluşturuyorlar?
+Diyelim ki platformdaki satışların %40'ı yalnızca 10 satıcıdan geliyor. Bu durumda şirket, az sayıdaki büyük satıcıya bağımlı olabilir. Bu satıcıların platformdan ayrılması ciddi bir gelir riski oluşturabilir.
+Ama satışlar binlerce satıcıya dengeli dağılıyorsa, bu risk daha düşük olabilir.
+
+### Seller Sales Concentration Analysis
+
+**Key Findings:**
+- The top 10% of active sellers (297 sellers) generated **67.11% of total product sales**.
+- The top 20% contributed **82.29%**, while the bottom 50% accounted for only **3.30%**.
+- Sales are highly concentrated among a relatively small group of high-performing sellers.
+
+**Business Implications:**
+- High-performing sellers are strategically important to the platform's sales performance.
+- Seller retention, operational support, and performance development may be important priorities.
+- Further analysis is needed to understand the factors associated with seller performance differences.
+
+**Methodology:** Sellers with delivered orders were divided into ten approximately equal-sized groups using PostgreSQL's `NTILE(10)` function, ranked by total product sales excluding freight.
+
+### Seller Geographic Performance
+
+São Paulo (SP) accounted for **64.36% of delivered-order product sales** and approximately **59.6% of active sellers**. Its market dominance is therefore strongly associated with its large seller base.
+
+However, SP was not the highest-performing state on every seller-level metric. Rio de Janeiro (RJ) had higher average sales per seller, while Minas Gerais (MG) had higher median sales per seller.
+
+The substantial differences between mean and median seller sales also suggest a right-skewed distribution, where a relatively small number of high-performing sellers may contribute disproportionately to total revenue.
+
+**Business implication:** Geographic performance should be evaluated using both total sales and seller-level metrics. High regional sales volume does not necessarily imply higher performance for the typical seller.
+
+
+
+
+
+
+
+
+
+
+
+
+
+### WHAT I LEARNED
 Customers veritabanında customer_id ve customer_unique_id olmasının sebebi örneğin ben bir e-ticaret sitesiyim. Sen benden bugün alışveriş yaptın. Sana bir customer_id verdim. Sonra hesabını sildin. 3 ay sonra tekrar üye oldun. Sence ben sana aynı customer_id'yi mi veririm? Muhtemelen hayır. Ama gerçekte aynı kişi sensin. İşte burada ikinci bir kimlik gerekebilir.
 Describe() ile oluşan top, en sık görülen değer; freq ise o değerin kaç kez görüldüğüdür.
 sort_values(ascending=false) ifadesi büyükten küçüğe sıralamayı sağladı, true olsaydı küçükten büyüğe sıralardı.
@@ -446,9 +508,22 @@ LAG(total_sales) OVER (
 LAG, bir önceki satırın satış tutarını getirir. OVER(...), bu işlemin hangi satırlar üzerinde yapılacağını tanımlar. PARTITION BYher kategoriyi ayrı değerlendirir.
 Ayrıca LAG illa ki bir önceki satırı getirmek zorunda değildir. Örneğin LAG(total_sales, 2) gibi bir kullanımda 2 satır geriye gider ve böylece 2 yıl öncesinin verisiyle karşılaştırma yapabiliriz.
 
-### Problems
+ROW_NUMBER(), bir sonuç kümesindeki her bir satıra 1'den başlayarak ardışık ve benzersiz bir sıra numarası atayan bir pencere (window) fonksiyonudur. Değerler birbirleriyle aynı olsa bile her satıra farklı ve ardışık bir numara verir. Örneğin:
+ROW_NUMBER() OVER (
+    PARTITION BY c.customer_unique_id
+    ORDER BY o.order_purchase_timestamp, o.order_id
+) AS purchase_rank
+kodu her müşterinin siparişlerini tarih sırasına göre numaralandırır. Diyelim A ve B müşterileri var. A müşterisinin 3 farklı siparişini bir kolonda tarihe göre sıralar, diğer kolonda ise purchase_rank ile 1-2-3 şeklinde numara verir. Daha sonra B için de aynı işlemi yapar ve purchase_rank kolonunda tekrar 1'den numaralandırmaya başlar.
 
-Claude "xtamam anladım kodu süpersin." kısmında kaldı data cleaning.
+RANK() bir Window Function'dur. Mesela satıcıları toplam satışlarına göre sıralayabilir. Ancak bir eşitlik durumu olduğunda örneğin 2 farklı satıcı da 40k satış yaptığında her ikisine de 2 numara verip bir sonrakinde 3 numarayı kullanmadan 4'e atlayabilir. DENSE_RANK() kullansaydık eşitliklikten sonra atlama yapmaz.
 
+NTILE(10) OVER (
+    ORDER BY total_sales DESC, seller_id
+)
+Bu ifade satıcıları satış tutarına göre büyükten küçüğe sıralıyor ve NTILE sayesinde yaklaşık eşit sayıda satıcı içeren 10 gruba bölüyor.
 
-### Ideas
+PERCENTILE_CONT(0.5) WITHIN GROUP (
+    ORDER BY total_sales
+)
+Bu kodda percentile kısmı, verinin %50'lik noktasını yani medyanını hesaplıyor.
+WITHIN GROUP ORDER BY total sales ise, hesaplama için satış değerlerini küçükten büyüğe sıralıyor
